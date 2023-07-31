@@ -26,5 +26,13 @@ class UserManager(DjangoUserManager):
         return self._create_user(username, email, password, **extra_fields)
     
 class User(AbstractUser):
+    name = models.CharField(max_length=50, null=True)
+    phone_number = models.CharField(max_length=50, null=True)
     age = models.IntegerField(null=True)
     objects = UserManager()
+
+class Mark(models.Model):
+    caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='caller')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
+    created_at = models.DateTimeField(auto_now_add=True)
+    detail = models.TextField()
