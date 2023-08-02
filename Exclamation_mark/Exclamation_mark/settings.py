@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'django.contrib.sites',
     'allauth',
-    'allauth.account',
+    # 'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
     'accounts',
@@ -59,13 +59,14 @@ REST_FRAMEWORK = {
 }
         
 REST_USE_JWT = True
-# JWT_AUTH_COOKIE = 'jwt-auth'
-# JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-auth'
+JWT_AUTH_COOKIE = 'jwt-auth'
+JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-auth'
 SITE_ID = 1
 # ACCOUT_UNIQUE_EMAIL = True
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USER_MODEL_EMAIL_FIELD = None
 # ACCOUNT_AUTHENTICATION_METHOD = 'email'
 # ACCOUNT_EMAIL_VERIFICATION = 'none'
 
