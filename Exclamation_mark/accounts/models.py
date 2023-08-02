@@ -27,6 +27,7 @@ class UserManager(DjangoUserManager):
     
 class User(AbstractUser):
     name = models.CharField(max_length=50, null=True)
+    type = models.CharField(max_length=50, null=True)
     phone_number = models.CharField(max_length=50, null=True)
     age = models.IntegerField(null=True)
     objects = UserManager()
