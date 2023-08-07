@@ -15,4 +15,4 @@ class UserSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['post_id', 'caller', 'title', 'caller_location', 'category']
+        fields = ['id', 'caller', 'title',  'location_latitude', 'location_longitude', 'category']

@@ -20,10 +20,19 @@ class RequestViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = RequestSerializer
     
+class PostCategoryFilter(APIView):
+    def get(self, request, format=None, category_number=None):
+        #category_number = request.GET.get('category_number')
+        posts = Post.objects.filter(category=category_number)
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+    
+    
+    
 class AcceptRequest(APIView):
     def post(self, request, format=None):
-        post_id = request.data.get('post_id')
-        post = Post.objects.get(post_id=post_id)
+        id = request.data.get('id')
+        post = Post.objects.get(id=id)
         post.receiver = request.username
         post.save()
-        return Response({'post_id': post_id})
+        return Response({'id': id})

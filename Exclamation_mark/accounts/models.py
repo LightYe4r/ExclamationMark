@@ -25,6 +25,7 @@ class UserManager(DjangoUserManager):
         return self._create_user(username, password, **extra_fields)
 
 class User(AbstractUser):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, null=True)
     type_choices = (
         ('caller', 'caller'),
@@ -36,13 +37,17 @@ class User(AbstractUser):
     objects = UserManager()
 
 class Post(models.Model):
-    post_id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='caller')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver', null=True)
     title = models.CharField(max_length=50, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    caller_location = models.CharField(max_length=50, null=False)
+    location_latitude = models.FloatField(null=False)
+    location_longitude = models.FloatField(null=False)
     category_choices = (
-        [(str(i)+'번', str(i)+'번') for i in range(1, 11)]
+        [(int(i), int(i)) for i in range(1, 11)]
     )
-    category = models.CharField(max_length=3, choices=category_choices, null=False)
+    category = models.IntegerField(null=False, choices=category_choices)
+    
+    
+    #주소명, 건물명 추가
