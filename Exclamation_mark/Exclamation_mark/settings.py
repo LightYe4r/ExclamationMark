@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-d+x@)4xpq%wgwistu5)3d8=^-69!oec&3ddi0a*hfe+f#0-$fu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app']
+ALLOWED_HOSTS = ['port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app', '127.0.0.1']
 
 
 # Application definition
@@ -154,3 +154,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+CSRF_TRUSTED_ORIGINS = ['https://port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app/']
