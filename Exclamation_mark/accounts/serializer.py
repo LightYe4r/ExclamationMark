@@ -12,7 +12,3 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
         
-class RequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ['id', 'caller', 'title',  'location_latitude', 'location_longitude', 'category']
