@@ -97,18 +97,33 @@ class MeetingAfter(APIView):
     def get(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
         serializer = PostSerializer(post)
-        if post.isWorkDone == True:
-            review = Review.objects.get(post=post, asker = request.user)
-            review_serializer = ReviewSerializer(review)
-            return Response({'post': serializer.data, 'review': review_serializer.data})
-        else:
-            return Response({'result': 'not yet'})
+        # if post.isWorkDone == True:
+        #     review = Review.objects.get(post=post, asker = request.user)
+        #     review_serializer = ReviewSerializer(review)
+        #     return Response({'post': serializer.data, 'review': review_serializer.data})
+        # else:
+        #     return Response({'result': 'not yet'})
+        return Response(serializer.data)
     
     def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
-        if request.user.type == 'asker':
+        if post.asker == request.user:
             review = Review.objects.create(post=post, asker = request.user, helper = post.helper ,score=request.data['score'], content=request.data['content'])
             review.save()
+            helper = User.objects.get(id=post.helper.id)
+            helper.task_count += 1
+            helper.score = (helper.score * (helper.task_count - 1) + float(request.data['score'])) / helper.task_count
+            if request.data['content'] == 'kind':
+                helper.kind_count += 1
+            elif request.data['content'] == 'easy':
+                helper.easy_count += 1
+            elif request.data['content'] == 'endure':
+                helper.endure_count += 1
+            elif request.data['content'] == 'fast':
+                helper.fast_count += 1
+            elif request.data['content'] == 'etc':
+                helper.etc_count += 1
+            helper.save()
             return Response({'result': 'review success'})
 
     
