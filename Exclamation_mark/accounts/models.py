@@ -38,7 +38,7 @@ class User(AbstractUser):
         ('male', '남성'),
         ('female', '여성'),
     )
-    sex = models.Charfield(max_length=7, choices=sex_choices, null=True)
+    sex = models.CharField(max_length=7, choices=sex_choices, null=True)
     point = models.IntegerField(default=0)
     score = models.FloatField(default=0)
     task_count = models.IntegerField(default=0)
@@ -51,12 +51,12 @@ class User(AbstractUser):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='caller')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver', null=True, blank=True)
+    asker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='caller')
+    helper = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver', null=True, blank=True)
     title = models.CharField(max_length=50, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     location_latitude = models.FloatField(null=False)
-    location_longitude = models.FloatField(null=False)
+    location_longtitude = models.FloatField(null=False)
     building_name = models.CharField(max_length=50, null=True, blank=True)
     address = models.CharField(max_length=100, null=True, blank=True)
     category_choices = (
@@ -70,11 +70,14 @@ class Post(models.Model):
         ('etc', '기타'),
     )
     category = models.CharField(max_length=25, null=False, choices=category_choices)
-    isWorkWone = models.BooleanField(default=False)
+    voice_record_name = models.CharField(max_length=50, null=True, blank=True)
+    isWorkDone = models.BooleanField(default=False)
 
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    asker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='asker')
+    helper = models.ForeignKey(User, on_delete=models.CASCADE, related_name='helper')
     score = models.FloatField(null=False)
     content_choices = (
         ('kind', '친절해요'),
