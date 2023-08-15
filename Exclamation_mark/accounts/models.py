@@ -28,12 +28,25 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, null=True)
     type_choices = (
-        ('caller', 'caller'),
-        ('receiver', 'receiver'),
+        ('asker', 'asker'),
+        ('helper', 'helper'),
     )
     type = models.CharField(max_length=8, choices=type_choices, null=False)
     phone_number = models.CharField(max_length=11, null=True)
     age = models.IntegerField(null=True)
+    sex_choices = (
+        ('male', '남성'),
+        ('female', '여성'),
+    )
+    sex = models.Charfield(max_length=7, choices=sex_choices, null=True)
+    point = models.IntegerField(default=0)
+    score = models.FloatField(default=0)
+    task_count = models.IntegerField(default=0)
+    kind_count = models.IntegerField(default=0)
+    easy_count = models.IntegerField(default=0)
+    endure_count = models.IntegerField(default=0)
+    fast_count = models.IntegerField(default=0)
+    etc_count = models.IntegerField(default=0)
     objects = UserManager()
 
 class Post(models.Model):
@@ -44,10 +57,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     location_latitude = models.FloatField(null=False)
     location_longitude = models.FloatField(null=False)
-    # category_choices = (
-    #     [(int(i), int(i)) for i in range(1, 11)]
-    # )
-    # category = models.IntegerField(null=False, choices=category_choices)
+    building_name = models.CharField(max_length=50, null=True, blank=True)
+    address = models.CharField(max_length=100, null=True, blank=True)
     category_choices = (
         ('finance', '금융'),
         ('shopping', '쇼핑'),
@@ -59,17 +70,19 @@ class Post(models.Model):
         ('etc', '기타'),
     )
     category = models.CharField(max_length=25, null=False, choices=category_choices)
-    
-    #주소명, 건물명 추가
+    isWorkWone = models.BooleanField(default=False)
 
-# class PostManager(models.Manager):
-#     def create(self, caller, title, location_latitude, location_longitude, category):
-#         post = self.model(
-#             caller = request.user.username,
-#             title = title,
-#             location_latitude = location_latitude,
-#             location_longitude = location_longitude,
-#             category = category
-#         )
-#         post.save()
-#         return post
+class Review(models.Model):
+    id = models.AutoField(primary_key=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    score = models.FloatField(null=False)
+    content_choices = (
+        ('kind', '친절해요'),
+        ('easy', '설명이쉬워요'),
+        ('endure','인내심이깊어요'),
+        ('fast', '빨라요'),
+        ('etc', '기타'),
+    )
+    content = models.CharField(max_length=10, null=False, choices=content_choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
