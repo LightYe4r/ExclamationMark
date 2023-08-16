@@ -32,8 +32,9 @@ class Login(APIView):
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.create_user(username=request.data['username'], password=request.data['password'])
-        pass
+        user = User.objects.create(username=request.data['username'], password=request.data['password'])
+        user.save()
+        return Response({'result': 'success'})
     
 class MainHelper(APIView):
     def get(self, request, format=None):
