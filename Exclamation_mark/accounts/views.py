@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.contrib.auth import authenticate
 from .models import User, Post, Review
 from.serializer import UserSerializer, PostSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -22,17 +22,23 @@ class PostViewSet(viewsets.ModelViewSet):
 class Login(APIView):
     def post(self, request, *args, **kwargs):
         # TODO: check if user exists & password is correct
-        user = User.objects.get(username=request.data['username'])
-        token = TokenObtainPairSerializer.get_token(user)
-        return Response({
-            'refresh_token': str(token),
-            'access_token': str(token.access_token)
-        })
+        #user = User.objects.get(username=request.data['username'])
+        # username = request.data['username']
+        # password = request.data['password']
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user is None:
+            return Response({'result': 'login fail'})
+        else:
+            token = TokenObtainPairSerializer.get_token(user)
+            return Response({
+                'refresh_token': str(token),
+                'access_token': str(token.access_token)
+            })
         
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.create(username=request.data['username'], password=request.data['password'])
+        user = User.objects.create(username=request.data['username'], password=request.data['password'], type=request.data['type'], phone_number=request.data['phone_number'], age=request.data['age'], sex=request.data['sex'])
         user.save()
         return Response({'result': 'success'})
     
