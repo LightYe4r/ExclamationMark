@@ -154,3 +154,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+CSRF_TRUSTED_ORIGINS = ["https://port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app", "https://127.0.0.1:8000"]
