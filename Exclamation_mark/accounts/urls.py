@@ -13,7 +13,7 @@ urlpatterns = [
     path('registration/', Register.as_view()),
     path('mainhelper/', MainHelper.as_view()),
     path('mainasker/', MainAsker.as_view()),
-    path('meeting/<int:post_id>/<str:command>/', Meeting.as_view()),
+    path('meeting/<int:post_id>/', Meeting.as_view()),
     path('meetingafter/<int:post_id>/', MeetingAfter.as_view()),
     path('recipient/', Recipient.as_view()),
     path('reqconfirm/<int:post_id>/', Reqconfirm.as_view()),

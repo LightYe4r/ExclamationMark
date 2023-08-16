@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from .models import User, Post, Review
-from.serializer import UserSerializer, PostSerializer, ReviewSerializer
+from.serializer import UserSerializer, PostSerializer, ReviewSerializer, AskerSerializer, HelperSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import datetime
@@ -18,13 +18,10 @@ class UserViewSet(viewsets.ModelViewSet):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
     
 class Login(APIView):
     def post(self, request, *args, **kwargs):
-        # TODO: check if user exists & password is correct
-        #user = User.objects.get(username=request.data['username'])
-        # username = request.data['username']
-        # password = request.data['password']
         user = authenticate(username=request.data['username'], password=request.data['password'])
         if user is None:
             return Response({'result': 'login fail'})
@@ -39,10 +36,7 @@ class Login(APIView):
 class Register(APIView):
     def post(self, request, *args, **kwargs):
         user = User.objects.create( username=request.data['username'], 
-                                    password=request.data['password'], 
                                     type=request.data['type'], 
-                                    phone_number=request.data['phone_number'], 
-                                    age=request.data['age'], 
                                     gender = request.data['gender'],
                                     birth_Year=request.data['birth_Year'],  
                                     birth_Month=request.data['birth_Month'],
@@ -50,13 +44,15 @@ class Register(APIView):
                                     )
         user.age = datetime.datetime.now().year - int(user.birth_Year) + 1
         user.age_range = user.age // 10 * 10
+        user.set_password(request.data['password'])
         user.save()
         return Response({'result': 'success'})
     
 class MainHelper(APIView):
     def get(self, request, format=None):
         posts = Post.objects.filter(helper=None)
-        serializer = PostSerializer(posts, many=True)
+        askers = posts.objects.select_related('asker').all()
+        serializer = AskerSerializer({"posts": posts, "askers": askers}, many=True)
         return Response(serializer.data)
     
     def post(self, request, format=None):
@@ -67,12 +63,28 @@ class MainHelper(APIView):
         return Response({'result': 'success'})
     
 class Meeting(APIView):
-    def get(self, request, format=None, post_id=None, command=None):
+    def get(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
-    def post(self, request, format=None, post_id=None, command=None):
+        if post.helper == None:
+            timeDiff = datetime.datetime.now(datetime.timezone.utc)-post.created_at
+            timeDiff = timeDiff.total_seconds()
+            timeDiff = int(timeDiff)
+            return Response({"min" : timeDiff // 60, "sec" : timeDiff % 60})
+        else:
+            if request.user == post.asker:
+                user = User.objects.get(id=post.helper.id)
+                post = Post.objects.get(id=post_id)
+                serializer = HelperSerializer({"post": post, "helper": user})
+                return Response(serializer.data)
+            else:
+                user = User.objects.get(id=post.asker.id)
+                post = Post.objects.get(id=post_id)
+                serializer = AskerSerializer({"post": post, "asker": user})
+                return Response(serializer.data)
+    
+    def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
+        command = request.data['command']
         if command == 'cancel':
             post.delete()
             return Response({'result': 'delete success'})
@@ -90,19 +102,16 @@ class Meeting(APIView):
 class MeetingAfter(APIView):
     def get(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
-        serializer = PostSerializer(post)
-        # if post.isWorkDone == True:
-        #     review = Review.objects.get(post=post, asker = request.user)
-        #     review_serializer = ReviewSerializer(review)
-        #     return Response({'post': serializer.data, 'review': review_serializer.data})
-        # else:
-        #     return Response({'result': 'not yet'})
-        return Response(serializer.data)
+        if post.isWorkDone == False:
+            return Response({'result': 'helper not complete'})
+        else:
+            user = User.objects.get(id=post.helper.id)
+            return Response({'result': 'helper complete', "helper": UserSerializer(user).data})
     
     def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
         if post.asker == request.user:
-            review = Review.objects.create(post=post, asker = request.user, helper = post.helper ,score=request.data['score'], content=request.data['content'])
+            review = Review.objects.create(post=post, asker = request.user, helper = post.helper, score=request.data['score'], content=request.data['content'])
             review.save()
             helper = User.objects.get(id=post.helper.id)
             helper.task_count += 1
@@ -117,18 +126,10 @@ class MeetingAfter(APIView):
                 helper.fast_count += 1
             elif request.data['content'] == 'etc':
                 helper.etc_count += 1
+            helper.point += 500
             helper.save()
             return Response({'result': 'review success'})
 
-    
-# class MainAsker(APIView):
-#     def get(self, request, format=None, category_name=None):
-#         if category_name == 'all':
-#             posts = Post.objects.all()
-#         else:
-#             posts = Post.objects.filter(category=category_name)
-#         serializer = PostSerializer(posts, many=True)
-#         return Response(serializer.data)
 class MainAsker(APIView):
     def get(self, request, format=None):
         category_name = request.data['category_name']
@@ -139,16 +140,6 @@ class MainAsker(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
-# class Recipient(APIView):
-#     def get(self, request, format=None, category_name=None, latitude=None, longtitude=None, building_name=None, address=None, voice_record_name=None):
-#         return Response({'result': 'get Recipient success'})
-#     def post(self, request, format=None, category_name=None, latitude=None, longtitude=None, building_name=None, address=None, voice_record_name=None):
-#         post = Post.objects.create(category=category_name, location_latitude=float(latitude), location_longtitude=float(longtitude), 
-#                                    asker=request.user, helper=None, isWorkDone=False, building_name=building_name, address=address,
-#                                    voice_record_name=voice_record_name)
-#         post.save()
-#         serializer = PostSerializer(post)
-#         return Response(serializer.data)
 class Recipient(APIView):
     def get(self, request, format=None):
         return Response({'result': 'get Recipient success'})
@@ -159,7 +150,6 @@ class Recipient(APIView):
         building_name = request.data['building_name']
         address = request.data['address']
         voice_record_name = request.data['voice_record_name']
-        asker = User.objects.get(id=1)
         post = Post.objects.create(category=category_name, location_latitude=float(latitude), location_longtitude=float(longtitude), 
                                    asker=request.user, helper=None, isWorkDone=False, building_name=building_name, address=address,
                                    voice_record_name=voice_record_name)

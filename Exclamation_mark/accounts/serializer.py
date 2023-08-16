@@ -16,3 +16,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+        
+class AskerSerializer(serializers.Serializer):   
+    post = PostSerializer(read_only=True)
+    asker = UserSerializer(read_only=True)
+    
+class HelperSerializer(serializers.Serializer):
+    post = PostSerializer(read_only=True)
+    helper = UserSerializer(read_only=True)
