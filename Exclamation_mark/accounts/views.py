@@ -29,56 +29,14 @@ class Login(APIView):
             'access_token': str(token.access_token)
         })
         
-
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
         pass
-        
-    
-    
-# class PostCategoryFilter(APIView):
-#     def get(self, request, format=None, category_name=None):
-#         posts = Post.objects.filter(category=category_name)
-#         serializer = PostSerializer(posts, many=True)
-#         return Response(serializer.data)
-    
-# class PostUserFilter(APIView):
-#     def get(self, request, format=None, user_id=None):
-#         posts = Post.objects.filter(caller=user_id)
-#         serializer = PostSerializer(posts, many=True)
-#         return Response(serializer.data)
-    
-# class PostAccept(APIView):
-#     def get(self, request, format=None, post_id=None):
-#         posts = Post.objects.filter(receiver=None)
-#         serializer = PostSerializer(posts, many=True)
-#         return Response(serializer.data)
-    
-#     def post(self, request, post_id=None):
-#         post = Post.objects.get(id=post_id)
-#         post.receiver = request.user
-#         post.save()
-#         return Response({'result': 'success'})
-    
-# class PostCreate(APIView):
-#     def get(self, request, format=None):
-#         posts = Post.objects.all()
-#         serializer = PostSerializer(posts, many=True)
-#         return Response(serializer.data)
-    
-#     def post(self, request, format=None):
-#         title = request.data['title']
-#         caller = request.user.username
-#         location_latitude = request.data['location_latitude']
-#         location_longitude = request.data['location_longitude']
-#         category = request.data['category']
-#         post = Post.objects.create(title=title, caller = caller, receiver = None, location_latitude=location_latitude, location_longitude=location_longitude, category=category)
-#         post.save()
-#         return Response({'result': 'success', 'created_at' : post.created_at})
     
 class MainHelper(APIView):
-    def get(self, request, format=None, category_name=None, post_id=None):
+    def get(self, request, format=None):
+        category_name = request.data['category_name']
         if category_name == 'all':
             posts = Post.objects.filter(helper=None)
         else:
@@ -86,12 +44,12 @@ class MainHelper(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
     
-    def post(self, request, format=None, category_name=None, post_id=None):
-        if post_id != 'none':
-            post = Post.objects.get(id=post_id)
-            post.helper = request.user
-            post.save()
-            return Response({'result': 'success'})
+    def post(self, request, format=None):
+        post_id = request.data['post_id']
+        post = Post.objects.get(id=post_id)
+        post.helper = request.user
+        post.save()
+        return Response({'result': 'success'})
     
 class Meeting(APIView):
     def get(self, request, format=None, post_id=None, command=None):
@@ -148,8 +106,17 @@ class MeetingAfter(APIView):
             return Response({'result': 'review success'})
 
     
+# class MainAsker(APIView):
+#     def get(self, request, format=None, category_name=None):
+#         if category_name == 'all':
+#             posts = Post.objects.all()
+#         else:
+#             posts = Post.objects.filter(category=category_name)
+#         serializer = PostSerializer(posts, many=True)
+#         return Response(serializer.data)
 class MainAsker(APIView):
-    def get(self, request, format=None, category_name=None, post_id=None):
+    def get(self, request, format=None):
+        category_name = request.data['category_name']
         if category_name == 'all':
             posts = Post.objects.all()
         else:
@@ -157,17 +124,34 @@ class MainAsker(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
+# class Recipient(APIView):
+#     def get(self, request, format=None, category_name=None, latitude=None, longtitude=None, building_name=None, address=None, voice_record_name=None):
+#         return Response({'result': 'get Recipient success'})
+#     def post(self, request, format=None, category_name=None, latitude=None, longtitude=None, building_name=None, address=None, voice_record_name=None):
+#         post = Post.objects.create(category=category_name, location_latitude=float(latitude), location_longtitude=float(longtitude), 
+#                                    asker=request.user, helper=None, isWorkDone=False, building_name=building_name, address=address,
+#                                    voice_record_name=voice_record_name)
+#         post.save()
+#         serializer = PostSerializer(post)
+#         return Response(serializer.data)
 class Recipient(APIView):
-    def get(self, request, format=None, category_name=None, latitude=None, longtitude=None, building_name=None, address=None, voice_record_name=None):
+    def get(self, request, format=None):
         return Response({'result': 'get Recipient success'})
-    def post(self, request, format=None, category_name=None, latitude=None, longtitude=None, building_name=None, address=None, voice_record_name=None):
+    def post(self, request, format=None):
+        category_name = request.data['category_name']
+        latitude = request.data['latitude']
+        longtitude = request.data['longtitude']
+        building_name = request.data['building_name']
+        address = request.data['address']
+        voice_record_name = request.data['voice_record_name']
+        asker = User.objects.get(id=1)
         post = Post.objects.create(category=category_name, location_latitude=float(latitude), location_longtitude=float(longtitude), 
                                    asker=request.user, helper=None, isWorkDone=False, building_name=building_name, address=address,
                                    voice_record_name=voice_record_name)
         post.save()
         serializer = PostSerializer(post)
         return Response(serializer.data)
-
+    
 class Reqconfirm(APIView):
     def get(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
