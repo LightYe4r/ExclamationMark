@@ -82,7 +82,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST=['https://127.0.0.1:8000', 'https://port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app']
+CORS_ORIGIN_WHITELIST=['https://127.0.0.1:8000', 
+                       'https://port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app',
+                       'https://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'Exclamation_mark.urls'
@@ -160,4 +162,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
 
-CSRF_TRUSTED_ORIGINS = ["https://port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app", "https://127.0.0.1:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://port-0-toy-k19y2kljwq5eju.sel4.cloudtype.app", 
+                        "https://127.0.0.1:8000",
+                        "https://localhost:3000"]
