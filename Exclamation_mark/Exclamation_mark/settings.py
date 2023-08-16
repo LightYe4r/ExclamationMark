@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'dj_rest_auth',
     'django.contrib.sites',
@@ -57,10 +58,12 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
-        
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'jwt-auth'
-JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-auth'
+
+AUTH_USER_MODEL = 'accounts.User'
+
+# REST_USE_JWT = True
+# JWT_AUTH_COOKIE = 'jwt-auth'
+# JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-auth'
 SITE_ID = 1
 # ACCOUT_UNIQUE_EMAIL = True
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = None

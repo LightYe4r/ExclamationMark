@@ -5,16 +5,37 @@ from rest_framework.response import Response
 
 from .models import User, Post, Review
 from.serializer import UserSerializer, PostSerializer, ReviewSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Create your views here.
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
     
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    
+class Login(APIView):
+    def post(self, request, *args, **kwargs):
+        # TODO: check if user exists & password is correct
+        user = User.objects.get(username=request.data['username'])
+        token = TokenObtainPairSerializer.get_token(user)
+        return Response({
+            'refresh_token': str(token),
+            'access_token': str(token.access_token)
+        })
+        
+
+# TODO: implement
+class Register(APIView):
+    def post(self, request, *args, **kwargs):
+        pass
+        
+    
     
 # class PostCategoryFilter(APIView):
 #     def get(self, request, format=None, category_name=None):

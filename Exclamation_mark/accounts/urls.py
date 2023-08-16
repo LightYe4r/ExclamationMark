@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import UserViewSet, PostViewSet, MainHelper, MainAsker, Meeting, MeetingAfter, Recipient, Reqconfirm
+from .views import UserViewSet, PostViewSet, MainHelper, MainAsker, Meeting, MeetingAfter, Recipient, Reqconfirm, Login
 from rest_framework import routers
 
 routers = routers.DefaultRouter()
@@ -9,7 +9,7 @@ routers.register('posts', PostViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),
-    path('accounts/', include('dj_rest_auth.urls')),
+    path('accounts/login/', Login.as_view()),
     path('registration/', include('dj_rest_auth.registration.urls')),
     path('mainhelper/<str:category_name>/<int:post_id>/', MainHelper.as_view()),
     path('mainasker/<str:category_name>/<int:post_id>/', MainAsker.as_view()),
