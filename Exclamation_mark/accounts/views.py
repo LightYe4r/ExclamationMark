@@ -49,6 +49,7 @@ class Register(APIView):
                                     birth_Day=request.data['birth_Day'],
                                     )
         user.age = datetime.datetime.now().year - int(user.birth_Year) + 1
+        user.age_range = user.age // 10 * 10
         user.save()
         return Response({'result': 'success'})
     

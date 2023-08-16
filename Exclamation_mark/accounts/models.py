@@ -37,6 +37,7 @@ class User(AbstractUser):
     birth_Month = models.CharField(max_length=2,null=True)
     birth_Day = models.CharField(max_length=2,null=True)
     age = models.IntegerField(null=True)
+    age_range = models.IntegerField(null=True)
     sex_choices = (
         ('male', '남성'),
         ('female', '여성'),
