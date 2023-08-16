@@ -32,17 +32,16 @@ class User(AbstractUser):
         ('helper', 'helper'),
     )
     type = models.CharField(max_length=8, choices=type_choices, null=False)
-    phone_number = models.CharField(max_length=11, null=True)
     birth_Year = models.CharField(max_length=4,null=True)
     birth_Month = models.CharField(max_length=2,null=True)
     birth_Day = models.CharField(max_length=2,null=True)
     age = models.IntegerField(null=True)
     age_range = models.IntegerField(null=True)
-    sex_choices = (
+    gender_choices = (
         ('male', '남성'),
         ('female', '여성'),
     )
-    sex = models.CharField(max_length=7, choices=sex_choices, null=True)
+    gender = models.CharField(max_length=7, choices=gender_choices, null=True)
     point = models.IntegerField(default=0)
     score = models.FloatField(default=0)
     task_count = models.IntegerField(default=0)

@@ -43,7 +43,7 @@ class Register(APIView):
                                     type=request.data['type'], 
                                     phone_number=request.data['phone_number'], 
                                     age=request.data['age'], 
-                                    sex=request.data['sex'],
+                                    gender = request.data['gender'],
                                     birth_Year=request.data['birth_Year'],  
                                     birth_Month=request.data['birth_Month'],
                                     birth_Day=request.data['birth_Day'],
