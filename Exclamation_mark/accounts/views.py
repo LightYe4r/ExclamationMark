@@ -7,7 +7,7 @@ from .models import User, Post, Review
 from.serializer import UserSerializer, PostSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+import datetime
 # Create your views here.
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -38,7 +38,17 @@ class Login(APIView):
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.create(username=request.data['username'], password=request.data['password'], type=request.data['type'], phone_number=request.data['phone_number'], age=request.data['age'], sex=request.data['sex'])
+        user = User.objects.create( username=request.data['username'], 
+                                    password=request.data['password'], 
+                                    type=request.data['type'], 
+                                    phone_number=request.data['phone_number'], 
+                                    age=request.data['age'], 
+                                    sex=request.data['sex'],
+                                    birth_Year=request.data['birth_Year'],  
+                                    birth_Month=request.data['birth_Month'],
+                                    birth_Day=request.data['birth_Day'],
+                                    )
+        user.age = datetime.datetime.now().year - int(user.birth_Year) + 1
         user.save()
         return Response({'result': 'success'})
     
