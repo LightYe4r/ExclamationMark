@@ -32,15 +32,12 @@ class Login(APIView):
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
+        user = User.objects.create_user(username=request.data['username'], password=request.data['password'])
         pass
     
 class MainHelper(APIView):
     def get(self, request, format=None):
-        category_name = request.data['category_name']
-        if category_name == 'all':
-            posts = Post.objects.filter(helper=None)
-        else:
-            posts = Post.objects.filter(category=category_name, helper=None)
+        posts = Post.objects.filter(helper=None)
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
     
