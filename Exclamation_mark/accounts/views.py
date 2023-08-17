@@ -175,7 +175,7 @@ class Recipient(APIView):
         address = request.data['address']
         voice_record_name = request.data['voice_record_name']
         post = Post.objects.create(category=category_name, location_latitude=float(latitude), location_longtitude=float(longtitude), 
-                                   asker=request.user, helper=None, isWorkDone=False, building_name=building_name, address=address,
+                                   asker=request.user, helper=None, building_name=building_name, address=address,
                                    voice_record_name=voice_record_name)
         post.save()
         serializer = PostSerializer(post)
