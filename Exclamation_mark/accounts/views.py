@@ -91,13 +91,24 @@ class Meeting(APIView):
     def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
         command = request.data['command']
-        if command == 'cancel':
+        if post.helper == None and command == 'cancel':
             post.delete()
-            return Response({'result': 'delete success'})
+            return Response({'result': 'request cancel success'})
+        
+        if command == 'cancel':
+            if request.user == post.helper:
+                post.helper_confirm = False
+                post.save()
+            else:
+                post.asker_confirm = False
+                post.save()
         elif command == 'complete':
-            post.isWorkDone = True
-            post.save()
-            return Response({'result': 'complete success'})
+            if request.user == post.helper:
+                post.helper_confirm = True
+                post.save()
+            else :
+                post.asker_confirm = True
+                post.save()
         elif command =='retry':
             post.helper = None
             post.save()
@@ -105,12 +116,24 @@ class Meeting(APIView):
         else:
             return Response({'result': 'error'})
         
+        if post.helper_confirm == True and post.asker_confirm == True:
+            user = User.objects.get(id=post.helper.id)
+            user.point += 500
+            user.save()
+                
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+        
 class MeetingAfter(APIView):
     def get(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
         if post.isWorkDone == False:
-            return Response({'result': 'helper not complete'})
+            return Response({'result': False})
         else:
+            if post.helper_confirm == True and post.asker_confirm == True:
+                return Response({'result': True})
+            else:
+                return Response({'result': False})
             user = User.objects.get(id=post.helper.id)
             return Response({'result': 'helper complete', "helper": UserSerializer(user).data})
     
@@ -132,7 +155,6 @@ class MeetingAfter(APIView):
                 helper.fast_count += 1
             elif request.data['content'] == 'etc':
                 helper.etc_count += 1
-            helper.point += 500
             helper.save()
             return Response({'result': 'review success'})
 

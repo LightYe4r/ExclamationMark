@@ -75,7 +75,8 @@ class Post(models.Model):
     )
     category = models.CharField(max_length=25, null=False, choices=category_choices)
     voice_record_name = models.CharField(max_length=50, null=True, blank=True)
-    isWorkDone = models.BooleanField(default=False)
+    asker_confirm = models.BooleanField(default=None, null=True, blank=True)
+    helper_confirm = models.BooleanField(default=None, null=True, blank=True)
 
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
