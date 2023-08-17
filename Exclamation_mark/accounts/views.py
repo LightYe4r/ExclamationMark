@@ -132,11 +132,7 @@ class MeetingAfter(APIView):
 
 class MainAsker(APIView):
     def get(self, request, format=None):
-        category_name = request.data['category_name']
-        if category_name == 'all':
-            posts = Post.objects.all()
-        else:
-            posts = Post.objects.filter(category=category_name)
+        posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
