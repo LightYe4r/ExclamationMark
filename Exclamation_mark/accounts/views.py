@@ -124,19 +124,7 @@ class Meeting(APIView):
         serializer = PostSerializer(post)
         return Response(serializer.data)
         
-class MeetingAfter(APIView):
-    def get(self, request, format=None, post_id=None):
-        post = Post.objects.get(id=post_id)
-        if post.isWorkDone == False:
-            return Response({'result': False})
-        else:
-            if post.helper_confirm == True and post.asker_confirm == True:
-                return Response({'result': True})
-            else:
-                return Response({'result': False})
-            user = User.objects.get(id=post.helper.id)
-            return Response({'result': 'helper complete', "helper": UserSerializer(user).data})
-    
+class MeetingAfter(APIView):  
     def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
         if post.asker == request.user:
