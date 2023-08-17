@@ -51,11 +51,17 @@ class Register(APIView):
 class MainHelper(APIView):
     def get(self, request, format=None):
         posts = Post.objects.filter(helper=None)
-        askers = posts.select_related('asker').all()
-        serializer = AskerSerializer({"posts": posts, "askers": askers}, many=True)
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
+class SelectHelper(APIView):
+    def get(self, request, format=None, post_id=None):
+        post = Post.objects.get(id=post_id)
+        user = User.objects.get(id=post.asker.id)
+        serializer = AskerSerializer({"post": post, "asker": user})
         return Response(serializer.data)
     
-    def post(self, request, format=None):
+    def post(self, request, format=None, post_id=None):
         post_id = request.data['post_id']
         post = Post.objects.get(id=post_id)
         post.helper = request.user
