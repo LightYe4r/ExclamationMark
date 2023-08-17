@@ -62,7 +62,6 @@ class SelectHelper(APIView):
         return Response(serializer.data)
     
     def post(self, request, format=None, post_id=None):
-        post_id = request.data['post_id']
         post = Post.objects.get(id=post_id)
         post.helper = request.user
         post.save()
