@@ -90,11 +90,7 @@ class Meeting(APIView):
     
     def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
-        command = request.data['command']
-        if post.helper == None and command == 'cancel':
-            post.delete()
-            return Response({'result': 'request cancel success'})
-        
+        command = request.data['command']       
         if command == 'cancel':
             if request.user == post.helper:
                 post.helper_confirm = False
@@ -111,8 +107,13 @@ class Meeting(APIView):
                 post.save()
         elif command =='retry':
             post.helper = None
+            post.helper_confirm = None
+            post.asker_confirm = None
             post.save()
             return Response({'result': 'retry success'})
+        elif command == 'remove':
+            post.delete()
+            return Response({'result': 'remove success'})
         else:
             return Response({'result': 'error'})
         
