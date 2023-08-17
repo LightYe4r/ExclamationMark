@@ -35,7 +35,8 @@ class Login(APIView):
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.create( username=request.data['username'], 
+        user = User.objects.create( username=request.data['username'],
+                                    nickname=request.data['nickname'], 
                                     type=request.data['type'], 
                                     gender = request.data['gender'],
                                     birth_Year=request.data['birth_Year'],  

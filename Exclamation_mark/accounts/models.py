@@ -26,7 +26,8 @@ class UserManager(DjangoUserManager):
 
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, null=True)
+    name = models.CharField(max_length=50)
+    nickname = models.CharField(max_length=50, unique=True, null=False)
     type_choices = (
         ('asker', 'asker'),
         ('helper', 'helper'),
