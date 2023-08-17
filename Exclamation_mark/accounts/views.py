@@ -51,7 +51,7 @@ class Register(APIView):
 class MainHelper(APIView):
     def get(self, request, format=None):
         posts = Post.objects.filter(helper=None)
-        askers = posts.objects.select_related('asker').all()
+        askers = posts.select_related('asker').all()
         serializer = AskerSerializer({"posts": posts, "askers": askers}, many=True)
         return Response(serializer.data)
     
