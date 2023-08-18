@@ -8,6 +8,8 @@ from.serializer import UserSerializer, PostSerializer, ReviewSerializer, AskerSe
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import datetime
+from django.db import IntegrityError
+
 # Create your views here.
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -36,7 +38,8 @@ class Login(APIView):
 # TODO: implement
 class Register(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.create( username=request.data['username'],
+        try:
+            user = User.objects.create( username=request.data['username'],
                                     nickname=request.data['nickname'], 
                                     type=request.data['type'], 
                                     gender = request.data['gender'],
@@ -44,11 +47,13 @@ class Register(APIView):
                                     birth_Month=request.data['birth_Month'],
                                     birth_Day=request.data['birth_Day'],
                                     )
-        user.age = datetime.datetime.now().year - int(user.birth_Year) + 1
-        user.age_range = user.age // 10 * 10
-        user.set_password(request.data['password'])
-        user.save()
-        return Response({'result': 'success'})
+            user.age = datetime.datetime.now().year - int(user.birth_Year) + 1
+            user.age_range = user.age // 10 * 10
+            user.set_password(request.data['password'])
+            user.save()
+            return Response({'result': 'success'})
+        except IntegrityError as e:
+            return Response({"message": e.message})
     
 class MainHelper(APIView):
     def get(self, request, format=None):
