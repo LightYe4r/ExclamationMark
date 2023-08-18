@@ -71,7 +71,11 @@ class SelectHelper(APIView):
     def post(self, request, format=None, post_id=None):
         post = Post.objects.get(id=post_id)
         post.helper = request.user
+        user = User.objects.get(id=request.user.id)
+        user.user_latitude = request.data['latitude']
+        user.user_longtitude = request.data['longtitude']
         post.save()
+        user.save()
         return Response({'result': 'success'})
     
 class Meeting(APIView):

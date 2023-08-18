@@ -51,6 +51,8 @@ class User(AbstractUser):
     endure_count = models.IntegerField(default=0)
     fast_count = models.IntegerField(default=0)
     etc_count = models.IntegerField(default=0)
+    user_latitude = models.FloatField(default = None, null = True, blank = True)
+    user_longtitude = models.FloatField(default = None, null = True, blank = True)
     objects = UserManager()
 
 class Post(models.Model):
