@@ -29,7 +29,8 @@ class Login(APIView):
             token = TokenObtainPairSerializer.get_token(user)
             return Response({
                 'refresh_token': str(token),
-                'access_token': str(token.access_token)
+                'access_token': str(token.access_token),
+                'type' : user.type
             })
         
 # TODO: implement
