@@ -53,7 +53,7 @@ class Register(APIView):
             user.save()
             return Response({'result': 'success'})
         except IntegrityError as e:
-            return Response({"message": e.message})
+            return Response({"ERROR": str(e)})
     
 class MainHelper(APIView):
     def get(self, request, format=None):
