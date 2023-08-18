@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import UserViewSet, PostViewSet, MainHelper, MainAsker, Meeting, MeetingAfter, Recipient, Reqconfirm, Login, Register, SelectHelper
+from .views import UserViewSet, PostViewSet, MainHelper, MainAsker, Meeting, MeetingAfter, Recipient, Reqconfirm, Login, Register, SelectHelper, GetPostInfo
 from rest_framework import routers
 
 routers = routers.DefaultRouter()
@@ -18,4 +18,5 @@ urlpatterns = [
     path('meetingafter/<int:post_id>/', MeetingAfter.as_view()),
     path('recipient/', Recipient.as_view()),
     path('reqconfirm/<int:post_id>/', Reqconfirm.as_view()),
+    path('getpostinfo/', GetPostInfo.as_view()),
 ]

@@ -176,7 +176,7 @@ class Reqconfirm(APIView):
         serializer = PostSerializer(post)
         return Response(serializer.data)
     
-class getPostInfo(APIView):
+class GetPostInfo(APIView):
     def get(self, request, format=None):
         post = Post.objects.get(asker = request.user)
         serializer = PostSerializer(post, many = True)
